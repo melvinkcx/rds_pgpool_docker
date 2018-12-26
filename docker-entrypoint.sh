@@ -25,15 +25,41 @@ do
   fi
 done
 
-if [ -n "${DB_USERNAME}" -a -n "${DB_PASSWORD}" ]; then 
-  echo 'Creating md5 auth entry for PgPool...'
-  pg_md5 -m -u ${DB_USERNAME} ${DB_PASSWORD}
+if [ "$CLUSTER_MODE" == "true" ]; then
+  echo "Using Cluster mode"
+  ENABLE_WATCHDOG=on
+
+  for ENV_VAR in "AWS_ACCESS_KEY" "AWS_SECRET_KEY" "AWS_DEFAULT_REGION" "SELF_INSTANCE_ID" "ELASTIC_IP" "SELF_PRIVATE_IP" "STANDBY_INSTANCE_PRIVATE_IP"
+  do
+    if [ -z "${!ENV_VAR}" ]; then
+      echo "$ENV_VAR is undefined. Please define it in /usr/local/etc/pgpool.conf" 
+    fi
+  done
+
+  if [ -n "${SELF_INSTANCE_ID}" -a -n "${ELASTIC_IP}" ]; then 
+    echo 'Creating escalation script...'
+    echo "
+    #! /bin/bash
+    echo "Assigning Elastic IP $ELASTIC_IP to instance $SELF_INSTANCE_ID"
+    aws ec2 associate-address --instance-id ${SELF_INSTANCE_ID} --public-ip ${ELASTIC_IP}
+    exit 0
+    " > /usr/local/etc/aws-escalation.sh
+    echo "
+    #! /bin/bash
+    echo "Disassociating Elastic IP $ELASTIC_UP"
+    aws ec2 disassociate-address --public-ip $ELASTIC_IP
+    exit 0
+    " > /usr/local/etc/aws-de-escalation.sh
+  fi
+else
+  echo "Using single node"
+  ENABLE_WATCHDOG=off
 fi
 
 echo "Create pgpool.conf..."
 echo "
 # ----------------------------
-# pgPool-II configuration filecd  
+# pgPool-II configuration file 
 # ----------------------------
 listen_addresses = '*'
 port = 9999
@@ -147,23 +173,26 @@ recovery_1st_stage_command = ''
 recovery_2nd_stage_command = ''
 recovery_timeout = 90
 client_idle_limit_in_recovery = 0
-use_watchdog = off
+use_watchdog = $ENABLE_WATCHDOG
 trusted_servers = ''
 ping_path = '/bin'
-wd_hostname = ''
+wd_hostname = '$SELF_PRIVATE_IP'
 wd_port = 9000
 wd_priority = 1
 wd_authkey = ''
 wd_ipc_socket_dir = '/tmp'
 delegate_IP = ''
+other_pgpool_hostname0 = '$STANDBY_INSTANCE_PRIVATE_IP'
+other_pgpool_port0 = 9999
+other_wd_port0 = 9000
 if_cmd_path = '/sbin'
 if_up_cmd = 'ip addr add $_IP_$/24 dev eth0 label eth0:0'
 if_down_cmd = 'ip addr del $_IP_$/24 dev eth0'
 arping_path = '/usr/sbin'
 arping_cmd = 'arping -U $_IP_$ -w 1'
 clear_memqcache_on_escalation = on
-wd_escalation_command = ''
-wd_de_escalation_command = ''
+wd_escalation_command = '/usr/local/etc/aws-escalation.sh'
+wd_de_escalation_command = '/usr/local/etc/aws-de-escalation.sh'
 failover_when_quorum_exists = on
 failover_require_consensus = on
 allow_multiple_failover_requests_from_node = off
@@ -200,5 +229,9 @@ white_memqcache_table_list = ''
 black_memqcache_table_list = ''
 " > /usr/local/etc/pgpool.conf
 
+if [ -n "${DB_USERNAME}" -a -n "${DB_PASSWORD}" ]; then 
+  echo 'Creating md5 auth entry for PgPool...'
+  pg_md5 -m -u ${DB_USERNAME} ${DB_PASSWORD}
+fi
+
 pgpool -n
-# bash

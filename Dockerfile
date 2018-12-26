@@ -8,6 +8,8 @@ RUN ln -fs /usr/share/zoneinfo/Etc/UTC /etc/localtime
 RUN apt update
 RUN apt install -y postgresql postgresql-server-dev-10 build-essential curl
 
+RUN pip install awscli
+
 WORKDIR /tmp
 RUN curl -L -o pgpool-II-4.0.2.tar.gz http://www.pgpool.net/download.php?f=pgpool-II-4.0.2.tar.gz
 RUN tar xf pgpool-II-4.0.2.tar.gz
