@@ -6,7 +6,7 @@ RUN ln -fs /usr/share/zoneinfo/Etc/UTC /etc/localtime
 # RUN dpkg-reconfigure -f noninteractive tzdata
 
 RUN apt update
-RUN apt install -y postgresql postgresql-server-dev-10 build-essential curl
+RUN apt install -y postgresql postgresql-server-dev-10 build-essential curl python-pip psmisc
 
 RUN pip install awscli
 
@@ -37,6 +37,7 @@ ENV DB_USERNAME postgres
 ENV DB_PASSWORD postgres
 
 EXPOSE 9999
+EXPOSE 9000
 
 WORKDIR /usr/local/bin
 COPY docker-entrypoint.sh /usr/local/bin
