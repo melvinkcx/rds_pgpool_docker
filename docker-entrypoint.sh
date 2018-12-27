@@ -262,4 +262,4 @@ if [ -f "/var/run/pgpool/pgpool.pid" ]; then
   fuser -k 9999/tcp 9000/tcp
 fi
 
-pgpool -n
+exec "$@"
