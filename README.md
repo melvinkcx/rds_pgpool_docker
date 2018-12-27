@@ -29,7 +29,44 @@ This image assumes:
 If you are having more than 2 nodes, you can still add them into the cluster by modifying `/usr/local/etc/pgpool.conf`. Consult [official documentation](http://www.pgpool.net/docs/latest/en/html/runtime-config.html) for more info.
 
 
-## How to run in Cluster Mode?
+## Running in Single-Node Mode
+
+### Prerequisite
+None
+
+### Run with Docker Compose
+
+In rds_pgpool, it is Single-Node mode by default.
+
+Assuming these are our database attributes:
+
+- Master DB Hostname: xxxx.xxxx.ap-southeast-1.rds.amazonaws.com
+- Slave DB Hostname: yyyy.yyyy.ap-southeast-1.rds.amazonaws.com
+- Database name: postgres
+- Database username: postgres
+- Database password: postgres
+
+__docker-compose.yml__ would be:
+
+```
+version: "3"
+services: 
+  pgpool:
+    restart: 'always'
+    image: melvinkcx/rds_pgpool:0.2.6
+    ports:
+      - "9999:9999"
+      - "9000:9000"
+      - "9694:9694"
+    environment:
+      - DB_NAME=postgres
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - MASTER_NODE_HOSTNAME=xxxx.xxxx.ap-southeast-1.rds.amazonaws.com
+      - REPLICA_NODE_HOSTNAME_0=yyyy.yyyy.ap-southeast-1.rds.amazonaws.com
+```
+
+## Running in Cluster Mode
 
 ### Prerequisite
 This image assumes a 2-node cluster, you are required to create 2 EC2 instances and allocate 1 Elastic IP. You will need the `instance-id` and `instance private IP` of both nodes. 
@@ -116,7 +153,10 @@ services:
 In each instance, run `docker-compose up -d`
 
 
-## Parameters & Environment Variables
+## Environment Variables
+These environment variables control the behavior of PgPool-II. 
+
+> Config files are initailized when container is created. Any subsequent change will not be updated. Please remove and rebuild the container if any environment variables is changed. 
 
 |Variable|Description|Required?|
 |---|---|--------|
@@ -135,7 +175,6 @@ In each instance, run `docker-compose up -d`
 |SELF_INSTANCE_ID| AWS instance ID this image is running on | No, unless in cluster mode |
 |SELF_PRIVATE_IP| AWS private IP of the instance this image is running on | No, unless in cluster mode |
 |STANDBY_INSTANCE_PRIVATE_IP| AWS private IP of the standby instance | No, unless in cluster mode |
-
 
 ## Testing
 
@@ -163,3 +202,8 @@ psql -h localhost -p 9999 -U <username> -W -c "show pool_nodes"
 
 [![Deepin-Screenshot-20181226172051.png](https://i.postimg.cc/NGrLLQ2s/Deepin-Screenshot-20181226172051.png)](https://postimg.cc/ThfT4McF)
 
+## FAQ
+
+### Why AWS access key and secret are needed?
+
+PgPool-II uses AWS CLI to associate Elastic IP when the master node is down. In order to use AWS CLI, access keys must be configured. If you are not using Cluster Mode, you can safely ignore it.
