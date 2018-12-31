@@ -26,7 +26,7 @@ This image assumes:
 - AWS RDS is used;
 - AWS RDS is a 2-node database cluster (1 master and 1 read replica).
 
-If you are having more than 2 nodes, you can still add them into the cluster by modifying `/usr/local/etc/pgpool.conf`. Consult [official documentation](http://www.pgpool.net/docs/latest/en/html/runtime-config.html) for more info.
+If you are having more than 2 nodes, you can still add them into the cluster by modifying `/usr/local/etc/pgpool.conf`. Consult [official documentation](http://www.pgpool.net/docs/latest/en/html/runtime-config.html) for more configurations.
 
 
 ## Running in Single-Node Mode
@@ -176,6 +176,11 @@ These environment variables control the behavior of PgPool-II.
 |SELF_PRIVATE_IP| AWS private IP of the instance this image is running on | No, unless in cluster mode |
 |STANDBY_INSTANCE_PRIVATE_IP| AWS private IP of the standby instance | No, unless in cluster mode |
 
+## Connecting To PgPool-II
+To connect to PgPool-II, re-configure your client apps to connect to the PgPool-II cluster with port `9999` instead of your database instance directly. 
+
+For instance, the Elastic IP assigned to your PgPool-II cluster is `55.55.55.55`, the database connection for all your client applications should be `55.55.55.55:9999`
+
 ## Testing
 
 ### Test Load Balancing
@@ -204,6 +209,9 @@ psql -h localhost -p 9999 -U <username> -W -c "show pool_nodes"
 
 ## FAQ
 
-### Why AWS access key and secret are needed?
+### Why are AWS access key and secret needed?
 
 PgPool-II uses AWS CLI to associate Elastic IP when the master node is down. In order to use AWS CLI, access keys must be configured. If you are not using Cluster Mode, you can safely ignore it.
+
+### What if I have more than 2 nodes?
+If you have more than 2 nodes, consult the [documentation](http://www.pgpool.net/docs/latest/en/html/runtime-config.html) to learn what to configure in `/usr/local/etc/pgpool.conf`.
