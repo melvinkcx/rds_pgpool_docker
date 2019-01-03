@@ -215,3 +215,22 @@ PgPool-II uses AWS CLI to associate Elastic IP when the master node is down. In 
 
 ### What if I have more than 2 nodes?
 If you have more than 2 nodes, consult the [documentation](http://www.pgpool.net/docs/latest/en/html/runtime-config.html) to learn what to configure in `/usr/local/etc/pgpool.conf`.
+
+## Troubleshooting
+
+### It says 'remaining connection slots are reserved for non-replication superuser connections' OR 'kind does not match between master(xx) slot[x] (xx)'.
+
+Your PgPool-II init children are more than your master node max connection. 
+
+How to view max connections of my Postgres:
+
+```
+show max_connections;
+
+ max_connections 
+-----------------
+ 26
+(1 row)
+```
+
+Max usable is 26 - 3 (reserved for superuser connection) = 23

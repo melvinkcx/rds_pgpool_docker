@@ -123,7 +123,7 @@ aws_secret_access_key = ${AWS_SECRET_KEY}
                                     # Directory containing CA root certificate(s)
                                     # (change requires restart)
 
-  num_init_children = 32
+  num_init_children = ${NUM_INIT_CHILDREN:-32}
   max_pool = 4
   child_life_time = 300
   child_max_connections = 0
