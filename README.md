@@ -175,6 +175,8 @@ These environment variables control the behavior of PgPool-II.
 |SELF_INSTANCE_ID| AWS instance ID this image is running on | No, unless in cluster mode |
 |SELF_PRIVATE_IP| AWS private IP of the instance this image is running on | No, unless in cluster mode |
 |STANDBY_INSTANCE_PRIVATE_IP| AWS private IP of the standby instance | No, unless in cluster mode |
+|NUM_INIT_CHILDREN| Maximum number of child process, default to 32 | Recommended|
+|MAX_POOL| Maximum connection cache per child, default to 4 | Recommended|
 
 ## Connecting To PgPool-II
 To connect to PgPool-II, re-configure your client apps to connect to the PgPool-II cluster with port `9999` instead of your database instance directly. 
@@ -234,3 +236,5 @@ show max_connections;
 ```
 
 Max usable is 26 - 3 (reserved for superuser connection) = 23
+
+If you pool size is 4, your children should not be more than 23 / 4 ~= 5.

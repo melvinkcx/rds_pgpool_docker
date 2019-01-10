@@ -124,7 +124,7 @@ aws_secret_access_key = ${AWS_SECRET_KEY}
                                     # (change requires restart)
 
   num_init_children = ${NUM_INIT_CHILDREN:-32}
-  max_pool = 4
+  max_pool = ${MAX_POOL:-4}
   child_life_time = 300
   child_max_connections = 0
   connection_life_time = 0
