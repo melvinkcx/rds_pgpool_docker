@@ -1,13 +1,13 @@
-# RDS_PGPOOL v0.2.6 - PgPool-II Docker Image For AWS RDS Load Balancing
+# RDS_PGPOOL v0.2.9 - PgPool-II Docker Image For AWS RDS Load Balancing
 
 
 This image builds PgPool-II from source on top of Ubuntu 18.04 LTS. 
 
 rds_pgpool comes with configuration files for load balancing and connection pooling for AWS RDS for PostgresQL.
 
-__Latest image version__: `v0.2.6` 
+__Latest image version__: `v0.2.9` 
 
-> Do NOT use any version before v0.2.6
+> Do NOT use any version before v0.2.8
 
 
 __Packages versions:__
@@ -53,7 +53,7 @@ version: "3"
 services: 
   pgpool:
     restart: 'always'
-    image: melvinkcx/rds_pgpool:0.2.6
+    image: melvinkcx/rds_pgpool:0.2.9
     ports:
       - "9999:9999"
       - "9000:9000"
@@ -100,7 +100,7 @@ version: "3"
 services: 
   pgpool:
     restart: 'always'
-    image: melvinkcx/rds_pgpool:0.2.6
+    image: melvinkcx/rds_pgpool:0.2.9
     ports:
       - "9999:9999"
       - "9000:9000"
@@ -129,7 +129,7 @@ version: "3"
 services: 
   pgpool:
     restart: 'always'
-    image: melvinkcx/rds_pgpool:0.2.6
+    image: melvinkcx/rds_pgpool:0.2.9
     ports:
       - "9999:9999"
       - "9000:9000"
