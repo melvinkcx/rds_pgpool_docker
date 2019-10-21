@@ -1,10 +1,6 @@
 name: Branch to be released
 
 on:
-  push:
-    branches:
-      # - 0.*.*
-      - github_action
   release:
     types: [published]
 
@@ -21,6 +17,7 @@ jobs:
           name: melvinkcx/rds_pgpool
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+          tag_names: true
       - name: Update README on Docker Hub
         uses: peter-evans/dockerhub-description@v2.1.0
         env:
