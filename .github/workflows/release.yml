@@ -1,0 +1,20 @@
+name: Branch to be released
+
+on:
+  push:
+    branches:
+      # - 0.*.*
+      - github_action
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+        with:
+          ref: ${{ github.ref }}
+      - uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: melvinkcx/rds_pgpool
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
