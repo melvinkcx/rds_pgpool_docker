@@ -11,7 +11,7 @@ __Latest image version__: `v0.2.6`
 
 
 __Packages versions:__
-- PgPool-II: v4.0.2
+- PgPool-II: v4.0.6
 - Ubuntu: 18.04 LTS
 - Postgres: 10 (We need this to build PgPool-II)
 
