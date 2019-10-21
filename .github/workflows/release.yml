@@ -1,0 +1,26 @@
+name: Branch to be released
+
+on:
+  release:
+    types: [published, created, edited]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+        with:
+          ref: ${{ github.ref }}
+      - name: Build and push to Docker Hub 
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: melvinkcx/rds_pgpool
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          tag_names: true
+      - name: Update README on Docker Hub
+        uses: peter-evans/dockerhub-description@v2.1.0
+        env:
+          DOCKERHUB_REPOSITORY: melvinkcx/rds_pgpool
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
