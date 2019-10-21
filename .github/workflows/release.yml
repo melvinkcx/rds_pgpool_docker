@@ -5,6 +5,8 @@ on:
     branches:
       # - 0.*.*
       - github_action
+  release:
+    types: [published]
 
 jobs:
   build:
@@ -23,5 +25,5 @@ jobs:
         uses: peter-evans/dockerhub-description@v2.1.0
         env:
           DOCKERHUB_REPOSITORY: melvinkcx/rds_pgpool
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
