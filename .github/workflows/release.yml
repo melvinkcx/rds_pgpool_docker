@@ -12,7 +12,7 @@ jobs:
         with:
           ref: ${{ github.ref }}
       - name: Build and push to Docker Hub 
-        uses: elgohr/Publish-Docker-Github-Action@master
+        uses: elgohr/Publish-Docker-Github-Action@v5
         with:
           name: melvinkcx/rds_pgpool
           username: ${{ secrets.DOCKER_USERNAME }}
